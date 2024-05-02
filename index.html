@@ -24,7 +24,43 @@
     <div class="text-center mb-5">
       <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#formModal">Add Task</button>
     </div>
+
     <!-- Todo: Create a modal with a form to add tasks -->
+    <div class="modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add a Task to the Board:</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+
+            <!-- The Task Form -->
+            <form class="row g-3 taskform">
+              <div class="col-md-6">
+                <label for="task-title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="task-title">
+              </div>
+              <div class="col-md-6">
+                <label for="task-due-date" class="form-label">Due Date</label>
+                <input type="datetime" class="form-control" id="task-due-date">
+              </div>
+              <div class="col-12">
+                <label for="task-detail" class="form-label">Details</label>
+                <input type="text" class="form-control" id="task-detail"/>
+              </div>
+            </form>
+
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The status columns for the tasks. -->
     <div class="row swim-lanes text-center justify-content-between">
       <div class="col-12 col-lg-4 d-flex">
         <div id="to-do" class="card border-light mb-3 lane flex-grow-1">
@@ -73,21 +109,3 @@
 </html>
 
 
-<!-- Gary Tips -->
-think about buiding array for the 3 differnt states of the objects, in js
-const tasks = {
-  TO DO: [
-    { Title: "get the HW done", due: "2024", description: "whaqtever" }
-  ],
-
-  inProgress: []
-
-  dine: []
-}
-
-function rendertasks() {
-  create 3 buckets
-
-  for each bucket build a ui task item for each item in the array
-
-}
