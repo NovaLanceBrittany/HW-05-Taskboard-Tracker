@@ -1,12 +1,30 @@
-// Retrieve tasks and nextId from localStorage
-let taskList = JSON.parse(localStorage.getItem("tasks"));
-
-
 // Element List / DOM Elements
 const taskFormEl = $('.taskform');
 const taskTitle = $('#task-title');
 const taskDueDate = $('#task-due-date');
 const taskDetail = $('#task-detail');
+
+
+
+// localStorage
+function readTasksFromStorage() {
+
+  let tasks = JSON.parse(localStorage.getItem('tasks'));
+
+  // ? If no tasks were retrieved from localStorage, assign tasks to a new empty array to push to later.
+  if (!tasks) {
+    tasks = [];
+  }
+
+  return tasks;
+}
+
+
+// Accepts an array of tasks, stringifys them, and saves them in localStorage.
+function saveTasksToStorage(tasks) {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+};
+
 
 
 // Creating The Task Card Element
@@ -104,8 +122,7 @@ function renderTaskList() {
 
 
 // Adding a New Task
-function handleAddTask(event){
-  event.preventDefault();
+function handleAddTask(){
 
   const taskName = taskTitle.val().trim();
   const taskDetails = taskDetail.val().trim();
@@ -127,7 +144,7 @@ function handleAddTask(event){
   saveTasksToStorage(tasks);
 
   // Prints the task data on the screen
-  printTaskData();
+  renderTaskList();
 
   // This is to clear the form inputs
   taskTitle.val("");
@@ -150,19 +167,62 @@ function handleDeleteTask() {
   });
 
   // to save the tasks to localStorage
-  saveProjectsToStorage(task);
-  printProjectData();
+  saveTasksToStorage(task);
+  renderTaskList();
 }
 
-// Todo: create a function to handle dropping a task into a new status lane
+
+
+// Dropping the Tasks into the status columns
 function handleDrop(event, ui) {
   const tasks = readTasksFromStorage();
-  const 
+  const taskId = ui.draggable[0].dataset.taskId;
+
+  // The id of the column that the card was dropped into
+  const newStatus = event.target.id;
+
+  for (let task of tasks) {
+    // Locating the task card by the `id` and update the task status.
+    if (task.id === taskId) {
+      task.status = newStatus;
+    }
+  }
+  // Saving the updated tasks array to localStorage (overwritting the previous one) and render the new task data to the screen.
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  renderTaskList();
 }
 
-// Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
+// Event Listener - Form
+taskFormEl.on('click', '.save-btn', function(e) {
+  e.preventDefault();
+
+  handleAddTask();
+
+  // Tells the modal to hide when the button is clicked
+  taskFormEl.modal('hide');
+})
+
+
+
+// Event Listener - Task Columns
+$('.swim-lanes').on('click', '.delete', handleDeleteTask);
+
+
+
+// On page load:  rendered the task list, make columns droppable, and make the due date field a date picker
 $(document).ready(function () {
 
+  // Prints task data to the screen on page load if there is any
+  renderTaskList();
+
+  $('#task-due-date').datepicker({
+    changeMonth: true,
+    changeYear: true,
+  });
+
+  // Make columns droppable
+  $('.lane').droppable({
+    accept: '.draggable',
+    drop: handleDrop,
+  });
 });
-
-
