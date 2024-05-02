@@ -1,5 +1,5 @@
 // Element List / DOM Elements
-const taskFormEl = $('.taskform');
+const taskFormEl = $('#formModal');
 const taskTitle = $('#task-title');
 const taskDueDate = $('#task-due-date');
 const taskDetail = $('#task-detail');
@@ -7,7 +7,7 @@ const taskDetail = $('#task-detail');
 
 
 // localStorage
-function readTasksFromStorage() {
+function readTaskFromStorage() {
 
   let tasks = JSON.parse(localStorage.getItem('tasks'));
 
@@ -35,12 +35,12 @@ function createTaskCard(task) {
     .attr('data-task-id', task.id);
 
   // The structure 
-  const cardHeader = $('<div>').addClass('card-header h4').text(task.taskTitle);
+  const cardHeader = $('<div>').addClass('card-header h4').text(task.name);
   const cardBody = $('<div>').addClass('card-body');
-  const cardDescription = $('<p>').addClass('card-text').text(taskDetail.type);
+  const cardDescription = $('<p>').addClass('card-text').text(task.details);
 
   // Due Date
-  const cardDueDate = $('<p>').addClass('card-text').text(task.dueDate);
+  const cardDueDate = $('<p>').addClass('card-text').text(task.taskDate);
 
   // Delete / Cancel Button
   const cardDeleteBtn = $('<button>')
@@ -50,9 +50,9 @@ function createTaskCard(task) {
   cardDeleteBtn.on('click', handleDeleteTask);
 
   // Background Color sorter for nearing due date
-  if (task.dueDate && task.status !== 'done') {
+  if (task.taskDate && task.status !== 'done') {
     const now = dayjs();
-    const taskDueDate = dayjs(task.dueDate, 'DD/MM/YYYY');
+    const taskDueDate = dayjs(task.taskDate, 'DD/MM/YYYY');
 
     // Near Due Task
     if (now.isSame(taskDueDate, 'day')) {
@@ -77,9 +77,9 @@ function createTaskCard(task) {
 
 // Printing the card on the page.
 function renderTaskList() {
-  const tasks = readTasksFromStorage();
+  const tasks = readTaskFromStorage();
 
-  // Emptying existing project cards from the columns
+  // Emptying existing task cards from the columns
   const todoList = $('#todo-cards');
   todoList.empty();
 
@@ -91,11 +91,11 @@ function renderTaskList() {
 
   //Loop Function through the tasks and create task cards for each status (if able)
   for (let task of tasks) {
-    if (task.status === '#to-do') {
+    if (task.status == 'to-do') {
       todoList.append(createTaskCard(task));
-    } else if (project.status === '#in-progress') {
+    } else if (task.status == 'in-progress') {
       inProgressList.append(createTaskCard(task));
-    } else if (project.status === '#done') {
+    } else if (task.status == 'done') {
       doneList.append(createTaskCard(task));
     }
   }
@@ -133,11 +133,12 @@ function handleAddTask(){
     name: taskName,
     details: taskDetails,
     taskDate: taskDate,
-    status: 'to-do'
+    status: 'to-do',
+    id: crypto.randomUUID(),
   }
 
   // Pulls tasks from localStorage to push to the new array
-  const tasks = readTasksFromStorage();
+  const tasks = readTaskFromStorage();
   tasks.push(newTask);
 
   // Save updated tasks to localStorage
@@ -167,7 +168,7 @@ function handleDeleteTask() {
   });
 
   // to save the tasks to localStorage
-  saveTasksToStorage(task);
+  saveTasksToStorage(tasks);
   renderTaskList();
 }
 
@@ -175,7 +176,7 @@ function handleDeleteTask() {
 
 // Dropping the Tasks into the status columns
 function handleDrop(event, ui) {
-  const tasks = readTasksFromStorage();
+  const tasks = readTaskFromStorage();
   const taskId = ui.draggable[0].dataset.taskId;
 
   // The id of the column that the card was dropped into

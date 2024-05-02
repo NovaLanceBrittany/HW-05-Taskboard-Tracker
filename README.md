@@ -42,6 +42,6 @@ As a project team member with multiple tasks to organize, I need to make a task 
 
 [The Repo:](https://github.com/NovaLanceBrittany/HW-05-Taskboard-Tracker)
 
-[The Deployment:](page-link)
+[The Deployment:](https://novalancebrittany.github.io/HW-05-Taskboard-Tracker/)
 
 
